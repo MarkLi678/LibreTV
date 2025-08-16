@@ -1,65 +1,37 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
   <title>LibreTV</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #000;
-      color: #fff;
-      text-align: center;
-    }
-    header {
-      padding: 10px;
-      background: #222;
-    }
-    #player {
-      width: 100%;
-      height: 80vh;
-      background: #111;
-    }
+    body { font-family: Arial, sans-serif; background: #111; color: #eee; text-align: center; }
+    h1 { color: #4CAF50; }
+    pre { text-align: left; background: #222; padding: 10px; border-radius: 6px; }
   </style>
 </head>
 <body>
-  <header>
-    <h1>LibreTV</h1>
-    <p>已集成数据源</p>
-  </header>
+  <h1>LibreTV 播放器</h1>
+  <p>正在加载 API 配置，请稍候…</p>
 
-  <div id="player">播放器加载中...</div>
+  <div id="output"></div>
 
   <script>
-    // 这里直接写死 config.json 的内容
-    const config = {
-      "name": "LibreTV-Settings",
-      "time": "1755337745415",
-      "cfgVer": "1.0.0",
-      "data": {
-        "selectedAPIs": "[\"custom_0\",\"custom_1\",\"custom_2\",\"custom_3\",\"custom_4\",\"custom_5\",\"custom_6\"]",
-        "customAPIs": "[{\"name\":\"电影天堂\",\"url\":\"http://caiji.dyttzyapi.com/api.php/provide/vod\",\"detail\":\"\",\"isAdult\":false},{\"name\":\"黑木耳\",\"url\":\"https://json.heimuer.xyz/api.php/provide/vod\",\"detail\":\"\",\"isAdult\":false},{\"name\":\"如意资源\",\"url\":\"http://cj.ryjcapi.com/api.php/provide/vod\",\"detail\":\"\",\"isAdult\":false},{\"name\":\"飓风资源网\",\"url\":\"https://bfzyapi.com/api.php/provide/vod\",\"detail\":\"\",\"isAdult\":false},{\"name\":\"天涯资源\",\"url\":\"https://tyyszy.com/api.php/provide/vod\",\"detail\":\"\",\"isAdult\":false},{\"name\":\"非凡影视\",\"url\":\"http://ffzy5.tv/api.php/provide/vod\",\"detail\":\"\",\"isAdult\":false},{\"name\":\"360资源\",\"url\":\"https://360zy.com/api.php/provide/vod\",\"detail\":\"\",\"isAdult\":false}]",
-        "yellowFilterEnabled": "true",
-        "adFilteringEnabled": "true",
-        "doubanEnabled": "true",
-        "hasInitializedDefaults": "true",
-        "videoSearchHistory": "[]"
-      },
-      "hash": "628e6ed284ee3175194568e9cc574a2f805064b396fbd5454d2137e4681fa9e7"
-    };
+    // 从 config.json 获取配置
+    fetch("./config.json")
+      .then(res => res.json())
+      .then(cfg => {
+        // 输出到页面
+        document.getElementById("output").innerHTML = 
+          "<h3>已加载的数据源：</h3><pre>" + 
+          JSON.stringify(cfg.data.customAPIs, null, 2) + "</pre>";
 
-    // 模拟播放器初始化
-    function initLibreTV() {
-      const apis = JSON.parse(config.data.customAPIs);
-      const player = document.getElementById("player");
-      player.innerHTML = "<h2>已加载数据源：</h2><ul>" +
-        apis.map(api => `<li>${api.name} - ${api.url}</li>`).join('') +
-        "</ul>";
-    }
-
-    // 启动
-    window.onload = initLibreTV;
+        // 这里你可以调用真正的播放器初始化方法
+        // 比如：initLibreTV(cfg);
+      })
+      .catch(err => {
+        document.getElementById("output").innerHTML = "<p style='color:red'>加载配置失败: " + err + "</p>";
+      });
   </script>
 </body>
 </html>
